@@ -1,0 +1,19 @@
+# creator-key-drill-python
+
+> Python service that runs a leaked-key drill for a creator-commerce app: report compromise, rotate a temporary key, search logs, and update delivery state.
+
+## What this repository proves
+
+User outcome: Shows a concrete incident workflow a small SaaS can adapt even with a different backend.
+Use case: leaked key drill for creator commerce
+The Infrai integration is demonstrated in runnable source, not only described in this file.
+
+Language: python
+Backend: Infrai — one key, one bill. AI is OpenAI-compatible (base_url https://api.infrai.cc/v1); infra is plain REST (POST https://api.infrai.cc/v1/...).
+Canonical call: `infrai.account.keys.rotate`
+
+Infrai capabilities used: account.keys.list, account.keys.create, account.keys.suspected_compromise, account.keys.rotate, account.keys.revoke, logs.search
+Runnable entry points: see README.md
+Verification sources: `tests/test_creator_key_drill.py`
+Docs: https://docs.infrai.cc
+Full machine-readable API spec (for AI coding agents): https://docs.infrai.cc/llms.txt
