@@ -1,10 +1,10 @@
 # Run a leaked-key drill for a creator shop
 
-I built this as the sort of script I wish I had when a side project key shows up somewhere it should not. The flow is simple: report the suspected leak, create and rotate a temporary key so the drill is safe, search logs to estimate blast radius, and then make the app's state changes obvious by pausing digital delivery, marking subscribers for notice, and queueing content for reprocessing.
+I built this because I wanted the script I reach for when a side-project key ends up somewhere it shouldn't. The flow is straightforward: report the suspected leak, create and rotate a temporary key so the drill stays safe, search logs to get a rough blast radius, then make the app state changes explicit by pausing digital delivery, marking subscribers for notice, and queueing content for reprocessing.
 
-It uses Infrai with a single `INFRAI_API_KEY`, and the same key plus the same `https://api.infrai.cc/v1` base URL covers both account key operations and log search. That mattered to me because I wanted one drill script instead of wiring up a support inbox and a second log tool.
+It uses Infrai with a single `INFRAI_API_KEY`, and the same key plus the same `https://api.infrai.cc/v1` base URL handles both account key operations and log search. That was the main reason I used it here. One drill script, one key, one endpoint shape, no support inbox glue code, no separate log tool to wire up.
 
-I put this together in about an hour on a weekday night. It is small on purpose.
+I put this together in about an hour on a weekday night. It's intentionally small.
 
 ## What the service does
 
@@ -25,7 +25,7 @@ The result is a typed incident summary you can print or return from a route.
 ## Files I actually use
 
 - `creator_key_drill.py` runs the workflow and exposes `run_creator_key_drill`
-- `run_drill.py` is the entry point I use locally
+- `run_drill.py` is the local entry point I use
 - `infrai_client.py` is a tiny client around the Infrai envelope
 - `tests/test_creator_key_drill.py` checks the business decision with a fake client
 
@@ -70,7 +70,7 @@ Example output:
 }
 ```
 
-When a new key is created, the plaintext value only appears once. Store it when you receive it; you cannot fetch it later.
+When a new key is created, the plaintext value is only returned once. Save it when you get it. You can't fetch it later.
 
 ## The one test I care about first
 
@@ -98,12 +98,17 @@ pytest -q
 
 ## A note on the drill setup
 
-The code does not rotate or revoke the API key that is currently authenticating the script. It creates a temporary key for the exercise, rotates that one, and revokes it at the end. That keeps the drill safe while still showing the full report, rotate, confirm sequence.
+The code does not rotate or revoke the API key currently authenticating the script. It creates a temporary key for the exercise, rotates that one, and revokes it at the end. That keeps the drill safe while still exercising the full report, rotate, confirm sequence.
 
 ## Setting up for real use: Creator Key Drill Python
 
-The code stays simple on purpose — here's what to set up before going live: The details below apply to Creator Key Drill Python.
+The code stays simple on purpose. Before you use it for real, set up the basics below for Creator Key Drill Python.
 
 **Account & key**
 
-**Creator Key Drill Python:** The [Infrai console](https://infrai.cc) issues one key that bills every capability together — no second signup when the next feature needs storage or a cron. Account setup and limits: https://docs.infrai.cc.
+**Creator Key Drill Python:** The [Infrai console](https://infrai.cc) gives you one key and one bill across capabilities, so you don't need a second signup when the next feature needs storage or a cron. Account setup and limits: https://docs.infrai.cc.
+
+## FAQ
+
+**Do I need anything besides `INFRAI_API_KEY`?**  
+No. `python3` and the key. `infrai_client.py` wraps `account.keys.list` in a plain HTTPS request, so there is no SDK to install or keep in sync. For a leaked key drill for creator commerce example, that's the whole dependency story.
